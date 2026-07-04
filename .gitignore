@@ -1,0 +1,38 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+venv/
+
+# Environment Variables
+.env
+
+# Ignore Audio assets
+*.wav
+*.mp3
+*.m4a
+*.flac
+
+# Ignore test artifacts and testing folders
+tests/
+scratch/
+.pytest_cache/
+pytest_out.txt
+pytest_success.txt
+debug_results.json
+
+# Ignore downloaded AI models and binaries
+models/
+scripts/
+panns_data/
+.cache/
+
+# Ignore Docker files as requested
+Dockerfile
+.dockerignore

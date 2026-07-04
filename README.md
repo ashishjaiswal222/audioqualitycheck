@@ -1,0 +1,88 @@
+# Voice/Audio Verification API
+
+A production-grade, privacy-first Python microservice designed as a strict quality gatekeeper for downstream AI voice cloning, dubbing, and text-to-speech (TTS) pipelines. 
+
+This API runs entirely offline, processing audio in-memory against 9 unique biometric, spectral, and machine learning heuristics (including Faster-Whisper, SpeechBrain, and PANNs) to ensure only pristine, studio-quality data enters your training sets.
+
+## Core Capabilities
+- **Background Noise & Music Detection:** Rejects files with low SNR or musical backing tracks.
+- **Overlapping Speech (Crosstalk):** Uses spectral heuristics to detect if two people are speaking over each other.
+- **Speaker Diarization:** Uses ECAPA-TDNN biometric embeddings to reject single files containing multiple speakers, and ensures identity consistency across batches.
+- **Clarity & Intelligibility:** Leverages Whisper to calculate log-probabilities of speech, rejecting mumbled or distorted tracks.
+- **Loudness & Pacing:** Enforces LUFS broadcast standards and calculates Words Per Minute (WPM).
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+- **Python 3.10+** (Tested natively on Windows/Linux)
+- **uv**: The ultra-fast Python package manager (`pip install uv`)
+- **FFmpeg**: Required in your system PATH for audio decoding.
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/ashishjaiswal222/audioqualitycheck.git
+   cd audioqualitycheck
+   ```
+
+2. **Install Dependencies via `uv`**
+   ```bash
+   uv venv
+   # Activate your virtual environment:
+   # On Windows: .venv\Scripts\activate
+   # On Linux: source .venv/bin/activate
+   uv pip install -r requirements.txt
+   ```
+   *(Note: The `requirements.txt` will pull all required PyTorch and audio analysis libraries automatically).*
+
+---
+
+## 💻 Running the Server
+
+To start the API, use Uvicorn via your `uv` environment:
+
+```bash
+uv run uvicorn app.main:app --host 0.0.0.0 --port 8000
+```
+
+> **Note on Windows**: The application automatically injects the bundled `scripts/bin` path containing FFmpeg into the environment so that it is always available to the subprocesses.
+
+Once the "Warming up models..." log finishes, the server is ready! 
+Visit the interactive Swagger UI documentation at: [http://localhost:8000/docs](http://localhost:8000/docs)
+
+---
+
+## 🧪 Testing Guide (API Interaction)
+
+You can easily test the API using `curl` or Postman. 
+
+### 1. Health Check
+Verify the server and models are fully loaded.
+```bash
+curl -X GET "http://localhost:8000/api/v1/audio-verify/health"
+```
+
+### 2. Single Audio Check
+Upload an audio file to evaluate its quality against all 9 metrics.
+```bash
+curl -X POST "http://localhost:8000/api/v1/audio-verify/check" \
+  -H "accept: application/json" \
+  -H "Content-Type: multipart/form-data" \
+  -F "file=@your_audio_file.wav"
+```
+
+### 3. Batch Verification
+Upload multiple takes simultaneously. The API will process each individually, and then compare their biometric voice embeddings to ensure the exact same person spoke across all files.
+```bash
+curl -X POST "http://localhost:8000/api/v1/audio-verify/check-batch" \
+  -H "accept: application/json" \
+  -H "Content-Type: multipart/form-data" \
+  -F "files=@take1.wav" \
+  -F "files=@take2.wav"
+```
+
+## 📚 Documentation
+For a deep dive into the architecture, the specific models used, and the pipeline workflow, please see the markdown files located in the `docs/` folder.
