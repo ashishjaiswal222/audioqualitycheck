@@ -43,7 +43,17 @@ This API runs entirely offline, processing audio in-memory against 9 unique biom
 
 ## 💻 Running the Server
 
-To start the API, you can use the provided `start.bat` file, or run it manually via Uvicorn:
+### Operating System Prerequisites (Linux / Docker)
+If you are deploying this API to a Linux server (e.g. Ubuntu, Debian) or a Docker container, you must ensure that the C-library `libsndfile1` is installed so `soundfile` can decode `.wav` and `.flac` files natively.
+
+```bash
+sudo apt-get update && sudo apt-get install -y libsndfile1
+```
+
+*(Note: Windows users do not need to do this, as the library ships natively with the python wheel.)*
+
+### Starting the Application
+To start the API locally, you can use the provided `start.bat` file (on Windows), or run it manually via Uvicorn:
 
 ```bash
 uv run uvicorn app.main:app --host 0.0.0.0 --port 8000

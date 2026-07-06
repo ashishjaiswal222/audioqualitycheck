@@ -1,4 +1,11 @@
 import inspect
+import warnings
+
+# Suppress annoying third-party library tracebacks and warnings on fresh clones
+warnings.filterwarnings("ignore", category=UserWarning, module="pyannote.audio.core.io")
+warnings.filterwarnings("ignore", category=UserWarning, module="speechbrain")
+warnings.filterwarnings("ignore", category=SyntaxWarning, module="pydub.utils")
+
 original_getframeinfo = inspect.getframeinfo
 def patched_getframeinfo(frame, context=1):
     info = original_getframeinfo(frame, context)
