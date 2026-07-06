@@ -35,13 +35,23 @@ if not os.path.exists(csv_path):
 
 # Fix panns_inference 'wget' missing error on Windows by downloading the weights natively
 pth_path = os.path.join(panns_dir, 'Cnn14_mAP=0.431.pth')
+
+# Check if file exists and is the correct size (approx 162MB). If corrupted/partial, remove it.
+if os.path.exists(pth_path) and os.path.getsize(pth_path) < 150_000_000:
+    os.remove(pth_path)
+
 if not os.path.exists(pth_path):
     print("Downloading PANNS model weights (this might take a minute)...")
     url = "https://zenodo.org/record/3987831/files/Cnn14_mAP%3D0.431.pth?download=1"
     try:
-        urllib.request.urlretrieve(url, pth_path)
+        # Download to a temporary file first to prevent corruption from interrupted downloads
+        tmp_path = pth_path + ".tmp"
+        urllib.request.urlretrieve(url, tmp_path)
+        os.rename(tmp_path, pth_path)
     except Exception as e:
         print(f"Failed to download panns model weights: {e}")
+        if os.path.exists(tmp_path):
+            os.remove(tmp_path)
 
 import panns_inference
 from app.config import settings
