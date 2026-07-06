@@ -10,6 +10,7 @@ This API runs entirely offline, processing audio in-memory against 9 unique biom
 - **Speaker Diarization:** Uses ECAPA-TDNN biometric embeddings to reject single files containing multiple speakers, and ensures identity consistency across batches.
 - **Clarity & Intelligibility:** Leverages Whisper to calculate log-probabilities of speech, rejecting mumbled or distorted tracks.
 - **Loudness & Pacing:** Enforces LUFS broadcast standards and calculates Words Per Minute (WPM).
+- **Duration Constraints:** Hard limit of 30 seconds max to prevent expensive CPU inference loops on oversized files.
 
 ---
 
@@ -42,13 +43,13 @@ This API runs entirely offline, processing audio in-memory against 9 unique biom
 
 ## 💻 Running the Server
 
-To start the API, use Uvicorn via your `uv` environment:
+To start the API, you can use the provided `start.bat` file, or run it manually via Uvicorn:
 
 ```bash
 uv run uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
 
-> **Note on Windows**: The application automatically injects the bundled `scripts/bin` path containing FFmpeg into the environment so that it is always available to the subprocesses.
+> **FFmpeg Zero-Touch Setup**: PyDub and Librosa require `ffmpeg` to decode `.mp3` and `.m4a` files. This repository features a completely automated Zero-Touch setup! When you run `start.bat` OR manually start `uvicorn`, the application will seamlessly check if FFmpeg is installed. If it is missing, the system will instantly download the correct pre-compiled binaries for Windows or Linux and place them into `scripts/bin/`. You do not need to install anything globally on your production servers!
 
 Once the "Warming up models..." log finishes, the server is ready! 
 Visit the interactive Swagger UI documentation at: [http://localhost:8000/docs](http://localhost:8000/docs)

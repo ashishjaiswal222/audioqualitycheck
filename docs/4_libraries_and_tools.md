@@ -35,3 +35,7 @@ This project integrates several state-of-the-art open-source audio processing li
 ### 7. Pyannote.audio (Optional)
 - **Source**: `pyannote/overlapped-speech-detection`
 - **Purpose**: Heavyweight overlapped speech detection. The pipeline currently defaults to a spectral heuristic fallback to avoid Hugging Face auth token requirements, but Pyannote can be enabled via `USE_OVERLAP_HEURISTIC_FALLBACK=False`.
+
+### 8. FFmpeg
+- **Source**: `setup_ffmpeg.py` (downloads from `BtbN` or `johnvansickle`)
+- **Purpose**: Required to decode compressed formats like `.mp3` and `.m4a` through `pydub`. It is automatically downloaded and installed natively within the API environment during the FastAPI lifespan boot phase.

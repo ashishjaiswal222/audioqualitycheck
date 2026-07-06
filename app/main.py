@@ -25,6 +25,15 @@ logger = structlog.get_logger()
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("Starting up API...")
+    
+    # Auto-install FFmpeg if missing before starting the workers
+    import subprocess
+    import sys
+    setup_script = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "scripts", "setup_ffmpeg.py"))
+    if os.path.exists(setup_script):
+        logger.info("Checking FFmpeg installation...")
+        subprocess.run([sys.executable, setup_script], check=True)
+        
     start_worker_pool()
     yield
     logger.info("Shutting down API...")
