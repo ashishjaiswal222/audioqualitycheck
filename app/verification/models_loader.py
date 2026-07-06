@@ -26,6 +26,16 @@ if not os.path.exists(csv_path):
     except Exception as e:
         print(f"Failed to download panns class labels: {e}")
 
+# Fix panns_inference 'wget' missing error on Windows by downloading the weights natively
+pth_path = os.path.join(panns_dir, 'Cnn14_mAP=0.431.pth')
+if not os.path.exists(pth_path):
+    print("Downloading PANNS model weights (this might take a minute)...")
+    url = "https://zenodo.org/record/3987831/files/Cnn14_mAP%3D0.431.pth?download=1"
+    try:
+        urllib.request.urlretrieve(url, pth_path)
+    except Exception as e:
+        print(f"Failed to download panns model weights: {e}")
+
 import panns_inference
 from app.config import settings
 from app.verification.constants import WHISPER_MODEL_SIZE
