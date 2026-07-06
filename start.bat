@@ -3,9 +3,9 @@ echo Starting Voice/Audio Verification API...
 echo ------------------------------------------
 echo ------------------------------------------
 
-:: Ensure all Python libraries from requirements.txt are installed
+:: Ensure all Python libraries are installed and environment is synced
 echo Checking Python dependencies...
-uv pip install -r requirements.txt
+uv sync
 
 :: Ensure FFmpeg is installed and ready
 echo Ensuring FFmpeg is installed...
