@@ -5,4 +5,5 @@ class AudioVerificationError(Exception):
         self.code = code
         self.message = message
         self.status_code = status_code
-        super().__init__(self.message)
+        # Pass all args to super() so multiprocessing can accurately unpickle it
+        super().__init__(code, message, status_code)
