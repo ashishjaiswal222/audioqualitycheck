@@ -36,9 +36,15 @@ if not os.path.exists(csv_path):
 # Fix panns_inference 'wget' missing error on Windows by downloading the weights natively
 pth_path = os.path.join(panns_dir, 'Cnn14_mAP=0.431.pth')
 
-# Check if file exists and is the correct size (approx 162MB). If corrupted/partial, remove it.
-if os.path.exists(pth_path) and os.path.getsize(pth_path) < 150_000_000:
-    os.remove(pth_path)
+# Check if file exists and is actually a valid PyTorch model. If corrupted/partial, remove it.
+if os.path.exists(pth_path):
+    try:
+        import torch
+        # A quick peek to see if it's truncated/corrupted
+        torch.load(pth_path, map_location='cpu')
+    except Exception:
+        print("Detected corrupted PANNS model weights. Removing...")
+        os.remove(pth_path)
 
 if not os.path.exists(pth_path):
     print("Downloading PANNS model weights (this might take a minute)...")
