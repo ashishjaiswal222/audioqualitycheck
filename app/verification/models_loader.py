@@ -11,6 +11,21 @@ import torch
 from faster_whisper import WhisperModel
 import speechbrain.inference
 from pyannote.audio import Pipeline
+
+import os
+import urllib.request
+# Fix panns_inference bug on fresh installs where it crashes on import if CSV is missing
+panns_dir = os.path.join(os.path.expanduser('~'), 'panns_data')
+os.makedirs(panns_dir, exist_ok=True)
+csv_path = os.path.join(panns_dir, 'class_labels_indices.csv')
+if not os.path.exists(csv_path):
+    print("Downloading PANNS class labels...")
+    url = "https://raw.githubusercontent.com/qiuqiangkong/audioset_tagging_cnn/master/metadata/class_labels_indices.csv"
+    try:
+        urllib.request.urlretrieve(url, csv_path)
+    except Exception as e:
+        print(f"Failed to download panns class labels: {e}")
+
 import panns_inference
 from app.config import settings
 from app.verification.constants import WHISPER_MODEL_SIZE
