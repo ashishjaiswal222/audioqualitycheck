@@ -30,23 +30,23 @@ TARGET_SAMPLE_RATE = 16000
 MIN_SPEECH_PROPORTION = 0.20  # 20%
 
 # Noise Thresholds
-MIN_SNR_DB = 15.0  # Decibels
+MIN_SNR_DB = 8.0  # Decibels (Lowered from 15.0 to allow light office noise/hum)
 
 # Loudness Thresholds
-MIN_LUFS = -35.0
+MIN_LUFS = -40.0 # Lowered from -35.0 to allow quieter microphone recordings
 
 # Background Music Thresholds
-MUSIC_CLASS_THRESHOLD = 0.40 # Minimum confidence to consider music present
+MUSIC_CLASS_THRESHOLD = 0.75 # Increased from 0.40 to allow faint background music, only rejecting loud/obvious tracks
 
 # Overlap Thresholds
-MAX_OVERLAP_TOLERANCE_SECONDS = 2.5
+MAX_OVERLAP_TOLERANCE_SECONDS = 15.0 # Increased from 2.5 to effectively disable false positives from room reverb/echo
 
 # Speaker Diarization
 CLUSTER_SHARE_MINIMUM = 0.10 # e.g. 10%
 DIARIZATION_DISTANCE_THRESHOLD = 0.7  # Cosine distance for ECAPA-TDNN
 
 # Speech Clarity (Whisper)
-MIN_AVG_LOGPROB = -0.8
+MIN_AVG_LOGPROB = -1.2 # Lowered from -0.8 to allow for natural accents and slight mumbling
 WHISPER_MODEL_SIZE = "tiny"
 
 # Pace
