@@ -19,9 +19,30 @@ This API runs entirely offline, processing audio in-memory against 9 unique biom
 ### Prerequisites
 - **Python 3.10+** (Tested natively on Windows/Linux)
 - **uv**: The ultra-fast Python package manager (`pip install uv`)
-- **FFmpeg**: Required in your system PATH for audio decoding.
 
-### Installation
+*(Note: You do not need to pre-install FFmpeg or download AI models yourself. The application handles all of this automatically).*
+
+---
+
+## 💻 Running the Server
+
+This repository is designed to be completely plug-and-play for both automated deployment and manual developer control. You can start the project using whichever method you prefer.
+
+### Option 1: The Fully Automated Way (1-Click Start)
+For users who want zero configuration, simply run the provided batch file. 
+
+```bash
+# On Windows
+./start.bat
+```
+When you run this file, the system will **automatically**:
+1. Check for missing dependencies and instantly create an isolated virtual environment using `uv sync`.
+2. Check if FFmpeg is installed on your OS. If missing, it will automatically download the Windows/Linux binaries to `scripts/bin/`.
+3. Start the FastAPI server.
+4. Auto-detect if any AI models (like PANNS) are missing or corrupted, and safely download them in the background.
+
+### Option 2: The Manual Developer Way
+If you prefer to manually control the environment (e.g., for debugging or custom deployment), you can run each step yourself.
 
 1. **Clone the repository**
    ```bash
@@ -29,19 +50,23 @@ This API runs entirely offline, processing audio in-memory against 9 unique biom
    cd audioqualitycheck
    ```
 
-2. **Install Dependencies via `uv`**
+2. **Sync Dependencies**
+   Instead of using a rigid `requirements.txt`, we use `pyproject.toml`. Run the following command to let `uv` dynamically resolve and install the perfect package versions for your specific OS and Python version:
    ```bash
-   uv venv
-   # Activate your virtual environment:
-   # On Windows: .venv\Scripts\activate
-   # On Linux: source .venv/bin/activate
-   uv pip install -r requirements.txt
+   uv sync
    ```
-   *(Note: The `requirements.txt` will pull all required PyTorch and audio analysis libraries automatically).*
 
----
+3. **Install FFmpeg (Optional)**
+   You can manually trigger the automated FFmpeg downloader script before starting the server:
+   ```bash
+   uv run python scripts/setup_ffmpeg.py
+   ```
 
-## 💻 Running the Server
+4. **Start Uvicorn**
+   Start the application directly. The server will safely download AI weights on-the-fly during initialization if they are missing.
+   ```bash
+   uv run uvicorn app.main:app --host 0.0.0.0 --port 8000
+   ```
 
 ### Operating System Prerequisites (Linux / Docker)
 If you are deploying this API to a Linux server (e.g. Ubuntu, Debian) or a Docker container, you must ensure that the C-library `libsndfile1` is installed so `soundfile` can decode `.wav` and `.flac` files natively.
@@ -51,15 +76,6 @@ sudo apt-get update && sudo apt-get install -y libsndfile1
 ```
 
 *(Note: Windows users do not need to do this, as the library ships natively with the python wheel.)*
-
-### Starting the Application
-To start the API locally, you can use the provided `start.bat` file (on Windows), or run it manually via Uvicorn:
-
-```bash
-uv run uvicorn app.main:app --host 0.0.0.0 --port 8000
-```
-
-> **FFmpeg Zero-Touch Setup**: PyDub and Librosa require `ffmpeg` to decode `.mp3` and `.m4a` files. This repository features a completely automated Zero-Touch setup! When you run `start.bat` OR manually start `uvicorn`, the application will seamlessly check if FFmpeg is installed. If it is missing, the system will instantly download the correct pre-compiled binaries for Windows or Linux and place them into `scripts/bin/`. You do not need to install anything globally on your production servers!
 
 Once the "Warming up models..." log finishes, the server is ready! 
 Visit the interactive Swagger UI documentation at: [http://localhost:8000/docs](http://localhost:8000/docs)
